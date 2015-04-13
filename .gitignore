@@ -1,0 +1,8 @@
+### https://raw.github.com/github/gitignore/d8892d3664bb29a47ab6b9f06cb1226610de3480/elixir.gitignore
+
+/_build
+/deps
+erl_crash.dump
+*.ez
+
+

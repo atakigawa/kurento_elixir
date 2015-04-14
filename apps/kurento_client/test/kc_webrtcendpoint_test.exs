@@ -89,7 +89,40 @@ defmodule KCWebRTcEndpointTest do
   end
 
   test "MediaElement", ctx do
-    #TODO
+    mp = ctx[:mp]
+    ep1 = @webrtcEndpoint.create(mp)
+    ep2 = @webrtcEndpoint.create(mp)
+
+    # media stream will be, nothing -> ep1 -> ep2 -> nothing
+    @webrtcEndpoint.connect(ep1, ep2)
+
+    assert @webrtcEndpoint.getSourceConnections(ep1) === nil
+    assert @webrtcEndpoint.getSinkConnections(ep2) === nil
+    # webrtcEndpoint.connect will create 2 connections. Audio and Video.
+    ep1sinks = @webrtcEndpoint.getSinkConnections(ep1)
+    ep2sources = @webrtcEndpoint.getSourceConnections(ep2)
+    assert length(ep1sinks) === 2
+    assert length(ep2sources) === 2
+
+    ep1sink = List.first(ep1sinks)
+    ep2source = List.first(ep2sources)
+    # source and sink for the same connection should be the same.
+    assert ep1sink["source"] === ep2source["source"]
+    assert ep1sink["sink"] === ep2source["sink"]
+
+    audioCaps = KC.MO.AudioCaps.create(
+      KC.MO.AudioCaps.opusCodec, 48000)
+    @webrtcEndpoint.setAudioFormat(ep1, audioCaps)
+    videoCaps = KC.MO.VideoCaps.create(
+      KC.MO.VideoCaps.vp8Codec, 1, 30)
+    @webrtcEndpoint.setVideoFormat(ep1, videoCaps)
+
+    @webrtcEndpoint.disconnect(ep1, ep2)
+    assert @webrtcEndpoint.getSinkConnections(ep1) === nil
+    assert @webrtcEndpoint.getSourceConnections(ep2) === nil
+
+    @webrtcEndpoint.release(ep1)
+    @webrtcEndpoint.release(ep2)
   end
 
   test "MediaObject", ctx do

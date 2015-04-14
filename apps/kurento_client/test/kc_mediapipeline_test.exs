@@ -1,7 +1,7 @@
 defmodule KCMediaPipelineTest do
   use ExUnit.Case
 
-  @mediaPipeline KC.MO.MediaPipeline
+  @mediaPipeline KC.MO.Core.MediaPipeline
 
   test "mediapipeline" do
     oStore = KC.Core.getObjectStoreName()

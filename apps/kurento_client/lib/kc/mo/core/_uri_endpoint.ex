@@ -1,7 +1,7 @@
-defmodule KC.MO.UriEndpoint do
+defmodule KC.MO.Core.UriEndpoint do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.Endpoint
+  @chainParent KC.MO.Core.Endpoint
 
   @moduledoc """
   Interface for endpoints that require a URI to work.

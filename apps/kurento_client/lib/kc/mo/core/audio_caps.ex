@@ -1,4 +1,4 @@
-defmodule KC.MO.AudioCaps do
+defmodule KC.MO.Core.AudioCaps do
   defstruct codec: "", bitrate: 0
 
   @opusCodec "OPUS"

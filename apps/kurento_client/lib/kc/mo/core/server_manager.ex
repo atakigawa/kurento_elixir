@@ -1,7 +1,7 @@
-defmodule KC.MO.ServerManager do
+defmodule KC.MO.Core.ServerManager do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.MediaObject
+  @chainParent KC.MO.Core.MediaObject
 
   @moduledoc """
   This is a standalone object for managing the MediaServer.

@@ -1,4 +1,4 @@
-defmodule KC.MO.VideoCaps do
+defmodule KC.MO.Core.VideoCaps do
   defstruct codec: "", framerate: %{}
 
   @vp8Codec "VP8"

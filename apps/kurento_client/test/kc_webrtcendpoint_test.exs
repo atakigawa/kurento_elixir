@@ -1,8 +1,8 @@
 defmodule KCWebRTcEndpointTest do
   use ExUnit.Case
 
-  @mediaPipeline KC.MO.MediaPipeline
-  @webrtcEndpoint KC.MO.WebRtcEndpoint
+  @mediaPipeline KC.MO.Core.MediaPipeline
+  @webrtcEndpoint KC.MO.Elements.WebRtcEndpoint
 
   setup_all do
     mp = @mediaPipeline.create()
@@ -110,11 +110,11 @@ defmodule KCWebRTcEndpointTest do
     assert ep1sink["source"] === ep2source["source"]
     assert ep1sink["sink"] === ep2source["sink"]
 
-    audioCaps = KC.MO.AudioCaps.create(
-      KC.MO.AudioCaps.opusCodec, 48000)
+    audioCaps = KC.MO.Core.AudioCaps.create(
+      KC.MO.Core.AudioCaps.opusCodec, 48000)
     @webrtcEndpoint.setAudioFormat(ep1, audioCaps)
-    videoCaps = KC.MO.VideoCaps.create(
-      KC.MO.VideoCaps.vp8Codec, 1, 30)
+    videoCaps = KC.MO.Core.VideoCaps.create(
+      KC.MO.Core.VideoCaps.vp8Codec, 1, 30)
     @webrtcEndpoint.setVideoFormat(ep1, videoCaps)
 
     @webrtcEndpoint.disconnect(ep1, ep2)

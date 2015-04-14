@@ -1,7 +1,7 @@
-defmodule KC.MO.Hub do
+defmodule KC.MO.Core.Hub do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.MediaObject
+  @chainParent KC.MO.Core.MediaObject
 
   @moduledoc """
   A Hub is a routing :rom:cls:`MediaObject`.

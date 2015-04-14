@@ -1,8 +1,8 @@
 defmodule KCServerManagerTest do
   use ExUnit.Case
 
-  @mediaPipeline KC.MO.MediaPipeline
-  @serverManager KC.MO.ServerManager
+  @mediaPipeline KC.MO.Core.MediaPipeline
+  @serverManager KC.MO.Core.ServerManager
 
   setup_all do
     mp = @mediaPipeline.create()
@@ -18,7 +18,6 @@ defmodule KCServerManagerTest do
     mp = ctx[:mp]
 
     manager = @serverManager.get()
-    assert %@serverManager{id: id} = manager
 
     serverInfo = @serverManager.getInfo(manager)
     assert is_list(serverInfo["modules"])

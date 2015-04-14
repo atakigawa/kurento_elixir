@@ -1,7 +1,7 @@
-defmodule KC.MO.SdpEndpoint do
+defmodule KC.MO.Core.SdpEndpoint do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.SessionEndpoint
+  @chainParent KC.MO.Core.SessionEndpoint
 
   @moduledoc """
   Implements an SDP negotiation endpoint able to
@@ -53,7 +53,7 @@ defmodule KC.MO.SdpEndpoint do
   def processAnswer(%{id: id}, answer) do
     {funcName, _} = __ENV__.function
     params = [answer: answer]
-    KC.Core.syncInvoke(id, funcName, HashDict.new)
+    KC.Core.syncInvoke(id, funcName, params)
   end
 
   @doc """

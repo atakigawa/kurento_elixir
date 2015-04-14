@@ -1,7 +1,7 @@
-defmodule KC.MO.MediaElement do
+defmodule KC.MO.Core.MediaElement do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.MediaObject
+  @chainParent KC.MO.Core.MediaObject
 
   @moduledoc """
   Basic building blocks of the media server, that can be
@@ -136,7 +136,7 @@ defmodule KC.MO.MediaElement do
   MediaElements that do not support configuration of
   audio capabilities will raise an exception.
   """
-  def setAudioFormat(%{id: id}, %KC.MO.AudioCaps{} = audioCaps) do
+  def setAudioFormat(%{id: id}, %KC.MO.Core.AudioCaps{} = audioCaps) do
     {funcName, _} = __ENV__.function
     params = [caps: Map.from_struct(audioCaps)]
     KC.Core.syncInvoke(id, funcName, params)
@@ -147,7 +147,7 @@ defmodule KC.MO.MediaElement do
   MediaElements that do not support configuration of
   video capabilities will raise an exception.
   """
-  def setVideoFormat(%{id: id}, %KC.MO.VideoCaps{} = videoCaps) do
+  def setVideoFormat(%{id: id}, %KC.MO.Core.VideoCaps{} = videoCaps) do
     {funcName, _} = __ENV__.function
     params = [caps: Map.from_struct(videoCaps)]
     KC.Core.syncInvoke(id, funcName, params)

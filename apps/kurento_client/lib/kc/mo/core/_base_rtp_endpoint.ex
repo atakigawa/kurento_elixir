@@ -1,7 +1,7 @@
-defmodule KC.MO.BaseRtpEndpoint do
+defmodule KC.MO.Core.BaseRtpEndpoint do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.SdpEndpoint
+  @chainParent KC.MO.Core.SdpEndpoint
 
   @moduledoc """
   Base class to manage common RTP features.

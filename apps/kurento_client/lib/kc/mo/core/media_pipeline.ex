@@ -1,7 +1,7 @@
-defmodule KC.MO.MediaPipeline do
+defmodule KC.MO.Core.MediaPipeline do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.MediaObject
+  @chainParent KC.MO.Core.MediaObject
 
   @kmsType "MediaPipeline"
 

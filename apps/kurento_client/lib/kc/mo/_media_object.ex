@@ -1,4 +1,4 @@
-defmodule KC.MediaObject do
+defmodule KC.MO.MediaObject do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainRoot}
 

@@ -1,7 +1,7 @@
-defmodule KC.Endpoint do
+defmodule KC.MO.Endpoint do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MediaElement
+  @chainParent KC.MO.MediaElement
 
   @moduledoc """
   Base interface for all end points.

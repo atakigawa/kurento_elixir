@@ -1,7 +1,7 @@
-defmodule KC.SdpEndpoint do
+defmodule KC.MO.SdpEndpoint do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.SessionEndpoint
+  @chainParent KC.MO.SessionEndpoint
 
   @moduledoc """
   Implements an SDP negotiation endpoint able to

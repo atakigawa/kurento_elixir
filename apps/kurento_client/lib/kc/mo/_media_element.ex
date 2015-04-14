@@ -1,7 +1,7 @@
-defmodule KC.MediaElement do
+defmodule KC.MO.MediaElement do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MediaObject
+  @chainParent KC.MO.MediaObject
 
   @moduledoc """
   Basic building blocks of the media server, that can be

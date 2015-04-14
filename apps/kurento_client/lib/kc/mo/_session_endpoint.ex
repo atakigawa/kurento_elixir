@@ -1,7 +1,7 @@
-defmodule KC.SessionEndpoint do
+defmodule KC.MO.SessionEndpoint do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.Endpoint
+  @chainParent KC.MO.Endpoint
 
   @moduledoc """
   Session based endpoint. A session is considered to be

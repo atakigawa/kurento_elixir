@@ -19,16 +19,16 @@ defmodule KC.Core.JsonRpcUtil do
     cond do
       is_atom(v) ->
         to_string(v)
+      Keyword.keyword?(v) || is_map(v) ->
+        v = Enum.map(v, fn {k1, v1} ->
+          reformat_inner(k1, v1)
+        end)
+        {v}
       is_list(v) ->
         v = Enum.map(v, fn v1 ->
           reformat_inner(v1)
         end)
         v
-      is_map(v) ->
-        v = Enum.map(v, fn {k1, v1} ->
-          reformat_inner(k1, v1)
-        end)
-        {v}
       true ->
         v
     end

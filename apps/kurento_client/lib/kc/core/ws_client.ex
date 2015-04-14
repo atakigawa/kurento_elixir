@@ -113,14 +113,14 @@ defmodule KC.Core.WSClient do
 
   defp putSessionId(myPrefix, sessionId) do
     key = String.to_atom(myPrefix <> @sessionIdKeySuffix)
-    {:ok, _} = KC.Core.ObjectStore.put(
+    {:ok, _} = KC.Core.ObjectStore.putSession(
       KC.Core.ObjectStore, key, sessionId)
     nil
   end
 
   defp getSessionId(myPrefix) do
     key = String.to_atom(myPrefix <> @sessionIdKeySuffix)
-    {:ok, sessionId} = KC.Core.ObjectStore.get(
+    {:ok, sessionId} = KC.Core.ObjectStore.getSession(
       KC.Core.ObjectStore, key)
     sessionId
   end

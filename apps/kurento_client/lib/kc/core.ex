@@ -16,19 +16,23 @@ defmodule KC.Core do
     %{"value" => objectId} = syncCallInner("create", params)
 
     #save info to ObjectStore
-    @objectStore.put(@objectStore, objectId, params)
+    @objectStore.putMediaObject(@objectStore, objectId, params)
 
     objectId
   end
 
-  def syncInvoke(objectId, operation, operationParams) do
+  def syncInvoke(objectId, operation, operationParams \\ HashDict.new) do
     params = Enum.into([
       object: objectId,
       operation: operation,
       operationParams: operationParams,
     ], HashDict.new)
 
-    syncCallInner("invoke", params)
+    case syncCallInner("invoke", params) do
+      %{"value" => :null} -> nil
+      %{"value" => ret} -> ret
+      _ -> nil
+    end
   end
 
   def syncRelease(objectId) do
@@ -39,7 +43,7 @@ defmodule KC.Core do
     syncCallInner("release", params)
 
     #remove info from ObjectStore
-    @objectStore.delete(@objectStore, objectId)
+    @objectStore.deleteMediaObject(@objectStore, objectId)
 
     nil
   end
@@ -53,20 +57,21 @@ defmodule KC.Core do
     %{"value" => subscriptionId} = syncCallInner("subscribe", params)
 
     #save info to ObjectStore
-    @objectStore.put(@objectStore, subscriptionId, params)
+    @objectStore.putSubscription(@objectStore, subscriptionId, params)
 
     subscriptionId
   end
 
-  def syncUnsubscribe(subscriptionId) do
+  def syncUnsubscribe(objectId, subscriptionId) do
     params = Enum.into([
+      object: objectId,
       subscription: subscriptionId,
     ], HashDict.new)
 
     syncCallInner("unsubscribe", params)
 
     #remove info from ObjectStore
-    @objectStore.delete(@objectStore, subscriptionId)
+    @objectStore.deleteSubscription(@objectStore, subscriptionId)
 
     nil
   end

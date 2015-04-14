@@ -8,15 +8,13 @@ defmodule KC.MO.WebRtcEndpoint do
   defstruct id: "",  mediaPipeline: ""
 
   def create(%KC.MO.MediaPipeline{id: mpId}) do
-    params = Enum.into([
-      mediaPipeline: mpId,
-    ], HashDict.new)
+    params = [mediaPipeline: mpId]
     id = KC.Core.syncCreate(@kmsType, params)
 
-    %KC.MO.WebRtcEndpoint{id: id, mediaPipeline: mpId}
+    %__MODULE__{id: id, mediaPipeline: mpId}
   end
 
-  def release(%KC.MO.WebRtcEndpoint{id: id}) do
+  def release(%__MODULE__{id: id}) do
     KC.Core.syncRelease(id)
   end
 end

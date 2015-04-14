@@ -14,10 +14,15 @@ defmodule KC.MO.BaseRtpEndpoint do
   0: unlimited.
   Default value: 100
   """
-  def getMinVideoSendBandwidth do
+  def getMinVideoSendBandwidth(%{id: id}) do
+    {funcName, _} = __ENV__.function
+    KC.Core.syncInvoke(id, funcName)
   end
 
-  def setMinVideoSendBandwidth do
+  def setMinVideoSendBandwidth(%{id: id}, bw) do
+    {funcName, _} = __ENV__.function
+    params = [minVideoSendBandwidth: bw]
+    KC.Core.syncInvoke(id, funcName, params)
   end
 
   @doc """
@@ -26,9 +31,14 @@ defmodule KC.MO.BaseRtpEndpoint do
   0: unlimited.
   Default value: 500
   """
-  def getMaxVideoSendBandwidth do
+  def getMaxVideoSendBandwidth(%{id: id}) do
+    {funcName, _} = __ENV__.function
+    KC.Core.syncInvoke(id, funcName)
   end
 
-  def setMaxVideoSendBandwidth do
+  def setMaxVideoSendBandwidth(%{id: id}, bw) do
+    {funcName, _} = __ENV__.function
+    params = [maxVideoSendBandwidth: bw]
+    KC.Core.syncInvoke(id, funcName, params)
   end
 end

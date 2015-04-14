@@ -1,15 +1,21 @@
 defmodule KCMediaPipelineTest do
   use ExUnit.Case
 
+  @mediaPipeline KC.MO.MediaPipeline
+
   test "mediapipeline" do
     oStore = KC.Core.getObjectStoreName()
 
-    mp = KC.MO.MediaPipeline.create()
-    assert %KC.MO.MediaPipeline{id: mpId} = mp
-    assert {:ok, true} === oStore.has(oStore, mpId)
+    mp = @mediaPipeline.create()
+    assert %@mediaPipeline{id: mpId} = mp
+    assert true === oStore.hasMediaObject(oStore, mpId)
 
-    KC.MO.MediaPipeline.release(mp)
-    assert {:ok, false} === oStore.has(oStore, mpId)
+    assert @mediaPipeline.getMediaPipeline(mp) === mp.id
+    assert @mediaPipeline.getParent(mp) === nil
+    assert @mediaPipeline.getName(mp) === mp.id
+
+    @mediaPipeline.release(mp)
+    assert false === oStore.hasMediaObject(oStore, mpId)
   end
 
 end

@@ -9,10 +9,10 @@ defmodule KC.MO.MediaPipeline do
 
   def create do
     id = KC.Core.syncCreate(@kmsType)
-    %KC.MO.MediaPipeline{id: id}
+    %__MODULE__{id: id}
   end
 
-  def release(%KC.MO.MediaPipeline{id: id}) do
+  def release(%__MODULE__{id: id}) do
     KC.Core.syncRelease(id)
   end
 end

@@ -3,14 +3,51 @@ defmodule KCCoreTest do
 
   test "ObjectStore" do
     oStore = KC.Core.getObjectStoreName()
-    {:ok, id} = oStore.put(oStore, "hogefugapiyo", somekey: 12345)
-    assert id === "hogefugapiyo"
 
-    {:ok, flag} = oStore.has(oStore, id)
-    assert flag === true
+    # single key
+    key = "hogefugapiyo"
+    assert oStore.put(oStore, key, foo: 12345) === {:ok, nil}
+    assert oStore.has(oStore, key) === true
+    assert oStore.get(oStore, key) === {:ok, [foo: 12345]}
+    assert oStore.delete(oStore, key) === {:ok, nil}
+    assert oStore.has(oStore, key) === false
+    assert oStore.get(oStore, key) === {:ok, nil}
 
-    {:ok, obj} = oStore.get(oStore, id)
-    assert obj === [somekey: 12345]
+    # array key
+    key = [:mo, "dummyMO"]
+    assert oStore.put(oStore, key, foo: 12345) === {:ok, nil}
+    assert oStore.has(oStore, key) === true
+    assert oStore.get(oStore, key) === {:ok, [foo: 12345]}
+    assert oStore.delete(oStore, key) === {:ok, nil}
+    assert oStore.has(oStore, key) === false
+    assert oStore.get(oStore, key) === {:ok, nil}
+
+    # session
+    key = "dummySessIdKey"
+    assert oStore.putSession(oStore, key, "dummySessId") === {:ok, nil}
+    assert oStore.hasSession(oStore, key) === true
+    assert oStore.getSession(oStore, key) === {:ok, "dummySessId"}
+    assert oStore.deleteSession(oStore, key) === {:ok, nil}
+    assert oStore.hasSession(oStore, key) === false
+    assert oStore.getSession(oStore, key) === {:ok, nil}
+
+    # media object
+    key = "dummyMOKey"
+    assert oStore.putMediaObject(oStore, key, "dummyMOVal") === {:ok, nil}
+    assert oStore.hasMediaObject(oStore, key) === true
+    assert oStore.getMediaObject(oStore, key) === {:ok, "dummyMOVal"}
+    assert oStore.deleteMediaObject(oStore, key) === {:ok, nil}
+    assert oStore.hasMediaObject(oStore, key) === false
+    assert oStore.getMediaObject(oStore, key) === {:ok, nil}
+
+    # subscription
+    key = "dummySubKey"
+    assert oStore.putSubscription(oStore, key, "dummySubVal") === {:ok, nil}
+    assert oStore.hasSubscription(oStore, key) === true
+    assert oStore.getSubscription(oStore, key) === {:ok, "dummySubVal"}
+    assert oStore.deleteSubscription(oStore, key) === {:ok, nil}
+    assert oStore.hasSubscription(oStore, key) === false
+    assert oStore.getSubscription(oStore, key) === {:ok, nil}
   end
 
   test "json serialize1" do

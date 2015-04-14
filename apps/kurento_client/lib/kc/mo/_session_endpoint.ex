@@ -11,12 +11,14 @@ defmodule KC.MO.SessionEndpoint do
 
   """
 
-  def evtMediaSessionStarted do
-    "MediaSessionStarted"
+  def subscribeMediaSessionStarted(%{id: id}) do
+    evtType = "MediaSessionStarted"
+    KC.Core.syncSubscribe(id, evtType)
   end
 
-  def evtMediaSessionTerminated do
-    "MediaSessionTerminated"
+  def subscribeMediaSessionTerminated(%{id: id}) do
+    evtType = "MediaSessionTerminated"
+    KC.Core.syncSubscribe(id, evtType)
   end
 
 end

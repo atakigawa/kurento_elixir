@@ -11,7 +11,9 @@ defmodule KC.MO.MediaObject do
   :rom:cls:`MediaPipeline` to which this MediaObject belong,
   or the pipeline itself if invoked over a :rom:cls:`MediaPipeline`.
   """
-  def getMediaPipeline do
+  def getMediaPipeline(%{id: id}) do
+    {funcName, _} = __ENV__.function
+    KC.Core.syncInvoke(id, funcName)
   end
 
 
@@ -23,7 +25,9 @@ defmodule KC.MO.MediaObject do
   is its :rom:cls:`MediaPipeline`.
   A :rom:cls:`MediaPipeline` has no parent, i.e. the property is null.
   """
-  def getParent do
+  def getParent(%{id: id}) do
+    {funcName, _} = __ENV__.function
+    KC.Core.syncInvoke(id, funcName)
   end
 
   @doc """
@@ -32,12 +36,19 @@ defmodule KC.MO.MediaObject do
   idenfiying the objects. By default is the object type followed
   by the object id.
   """
-  def getName do
+  def getName(%{id: id}) do
+    {funcName, _} = __ENV__.function
+    KC.Core.syncInvoke(id, funcName)
   end
 
+  def subscribeEvtError(%{id: id}) do
+    evtType = "Error"
+    KC.Core.syncSubscribe(id, evtType)
+  end
 
-  def evtError do
-    "Error"
+  # function to use for all unsubscribes
+  def unsubscribe(%{id: id}, subscriptionId) do
+    KC.Core.syncUnsubscribe(id, subscriptionId)
   end
 
 end

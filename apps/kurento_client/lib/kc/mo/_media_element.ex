@@ -20,26 +20,44 @@ defmodule KC.MO.MediaElement do
   Get the connections information of the elements that are
   sending media to this element :rom:cls:`MediaElement`.
   """
-  def getSourceConnections() do
-    getSourceConnections(nil, nil)
+  def getSourceConnections(%{id: _} = obj) do
+    getSourceConnections(obj, nil, nil)
   end
-  def getSourceConnections(mediaType) do
-    getSourceConnections(mediaType, nil)
+  def getSourceConnections(%{id: _} = obj, mediaType) do
+    getSourceConnections(obj, mediaType, nil)
   end
-  def getSourceConnections(mediaType, description) do
+  def getSourceConnections(%{id: id}, mediaType, description) do
+    {funcName, _} = __ENV__.function
+    params = HashDict.new
+    if not is_nil(mediaType) do
+      params = HashDict.put(params, "mediaType", mediaType)
+    end
+    if not is_nil(description) do
+      params = HashDict.put(params, "description", description)
+    end
+    KC.Core.syncInvoke(id, funcName, params)
   end
 
   @doc """
   Returns a list of the connections information of the
   elements that ere receiving media from this element.
   """
-  def getSinkConnections() do
-    getSinkConnections(nil, nil)
+  def getSinkConnections(%{id: _} = obj) do
+    getSinkConnections(obj, nil, nil)
   end
-  def getSinkConnections(mediaType) do
-    getSinkConnections(mediaType, nil)
+  def getSinkConnections(%{id: _} = obj, mediaType) do
+    getSinkConnections(obj, mediaType, nil)
   end
-  def getSinkConnections(mediaType, description) do
+  def getSinkConnections(%{id: id}, mediaType, description) do
+    {funcName, _} = __ENV__.function
+    params = HashDict.new
+    if not is_nil(mediaType) do
+      params = HashDict.put(params, "mediaType", mediaType)
+    end
+    if not is_nil(description) do
+      params = HashDict.put(params, "description", description)
+    end
+    KC.Core.syncInvoke(id, funcName, params)
   end
 
   @doc """
@@ -49,17 +67,33 @@ defmodule KC.MO.MediaElement do
   when both media element show capabilities for connecting
   with the given restrictions.
   """
-  def connect(sink) do
-    connect(sink, nil, nil, nil)
+  def connect(%{id: _} = obj, sink) do
+    connect(obj, sink, nil, nil, nil)
   end
-  def connect(sink, mediaType) do
-    connect(sink, mediaType, nil, nil)
+  def connect(%{id: _} = obj, sink, mediaType) do
+    connect(obj, sink, mediaType, nil, nil)
   end
   def connect(
+      %{id: id},
       sink,
       mediaType,
       sourceMediaDescription,
       sinkMediaDescription) do
+    {funcName, _} = __ENV__.function
+    params = HashDict.new
+    params = HashDict.put(params, "sink", sink)
+    if not is_nil(mediaType) do
+      params = HashDict.put(params, "mediaType", mediaType)
+    end
+    if not is_nil(sourceMediaDescription) do
+      params = HashDict.put(params,
+        "sourceMediaDescription", sourceMediaDescription)
+    end
+    if not is_nil(sinkMediaDescription) do
+      params = HashDict.put(params,
+        "sinkMediaDescription", sinkMediaDescription)
+    end
+    KC.Core.syncInvoke(id, funcName, params)
   end
 
   @doc """
@@ -68,17 +102,33 @@ defmodule KC.MO.MediaElement do
   sink element. If the previously requested connection didn't
   take place it is also removed.
   """
-  def disconnect(sink) do
-    disconnect(sink, nil, nil, nil)
+  def disconnect(%{id: _} = obj, sink) do
+    disconnect(obj, sink, nil, nil, nil)
   end
-  def disconnect(sink, mediaType) do
-    disconnect(sink, mediaType, nil, nil)
+  def disconnect(%{id: _} = obj, sink, mediaType) do
+    disconnect(obj, sink, mediaType, nil, nil)
   end
   def disconnect(
+      %{id: id},
       sink,
       mediaType,
       sourceMediaDescription,
       sinkMediaDescription) do
+    {funcName, _} = __ENV__.function
+    params = HashDict.new
+    params = HashDict.put(params, "sink", sink)
+    if not is_nil(mediaType) do
+      params = HashDict.put(params, "mediaType", mediaType)
+    end
+    if not is_nil(sourceMediaDescription) do
+      params = HashDict.put(params,
+        "sourceMediaDescription", sourceMediaDescription)
+    end
+    if not is_nil(sinkMediaDescription) do
+      params = HashDict.put(params,
+        "sinkMediaDescription", sinkMediaDescription)
+    end
+    KC.Core.syncInvoke(id, funcName, params)
   end
 
   @doc """
@@ -86,7 +136,10 @@ defmodule KC.MO.MediaElement do
   MediaElements that do not support configuration of
   audio capabilities will raise an exception.
   """
-  def setAudioFormat(audioCaps) do
+  def setAudioFormat(%{id: id}, audioCaps) do
+    {funcName, _} = __ENV__.function
+    params = [caps: audioCaps]
+    KC.Core.syncInvoke(id, funcName, params)
   end
 
   @doc """
@@ -94,7 +147,10 @@ defmodule KC.MO.MediaElement do
   MediaElements that do not support configuration of
   video capabilities will raise an exception.
   """
-  def setVideoFormat(videoCaps) do
+  def setVideoFormat(%{id: id}, videoCaps) do
+    {funcName, _} = __ENV__.function
+    params = [caps: videoCaps]
+    KC.Core.syncInvoke(id, funcName, params)
   end
 
 end

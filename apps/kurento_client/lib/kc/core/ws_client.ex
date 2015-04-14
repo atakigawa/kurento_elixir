@@ -48,7 +48,7 @@ defmodule KC.Core.WSClient do
     {:ok, dict}
   end
 
-  def handle_call({:send_req, method, params}, from, dict0) when not is_nil(params) do
+  def handle_call({:send_req, method, params}, _from, dict0) when not is_nil(params) do
     conn = HashDict.get(dict0, :conn)
     myPrefix = HashDict.get(dict0, :myPrefix)
     seq0 = HashDict.get(dict0, :seq)

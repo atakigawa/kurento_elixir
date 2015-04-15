@@ -7,11 +7,13 @@ defmodule KC do
     import Supervisor.Spec, warn: false
 
     objectStore = KC.Core.getObjectStoreName()
+    eventHandler = KC.Core.getEventHandlerName()
     kmsClient = KC.Core.getKmsClientName()
 
     children = [
       # Define workers and child supervisors to be supervised
       worker(objectStore, [[name: objectStore]]),
+      worker(eventHandler, [[name: eventHandler]]),
       worker(kmsClient, [KC.config(:kms_conn_info), [name: kmsClient]]),
     ]
 

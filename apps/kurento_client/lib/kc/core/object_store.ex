@@ -115,10 +115,10 @@ defmodule KC.Core.ObjectStore do
 
     case length(firstKeys) do
       0 ->
-        dict = HashDict.delete(dict0, lastKey)
+        dict = Dict.delete(dict0, lastKey)
       _ ->
         innerDict = get_in(dict0, firstKeys)
-        innerDict = HashDict.delete(innerDict, lastKey)
+        innerDict = Dict.delete(innerDict, lastKey)
         dict = put_in(dict0, firstKeys, innerDict)
     end
     {:reply, {:ok, nil}, dict}

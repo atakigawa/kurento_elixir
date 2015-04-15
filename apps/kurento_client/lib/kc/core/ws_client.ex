@@ -23,6 +23,7 @@ defmodule KC.Core.WSClient do
     tag = myPrefix <> to_string(seq0)
 
     # connect to KMS
+    # TODO try to get sessionId from ObjectStore. there already might be one.
     bin =
       createReqObj(tag, "connect", nil)
       |> KC.Core.JsonRpcUtil.serialize()
@@ -31,7 +32,7 @@ defmodule KC.Core.WSClient do
     res = socketRecv(conn)
 
     case parseResponse(res) do
-      {:ok, %{"result" => result}} ->
+      {:response, %{"result" => result}} ->
         # save sessionId.
         sessionId = result["sessionId"]
         putSessionId(myPrefix, sessionId)
@@ -40,44 +41,71 @@ defmodule KC.Core.WSClient do
         errCode = errInfo["code"]
         errMsg = errInfo["message"]
         msg = "received error from KMS. code: #{errCode}. msg: #{errMsg}."
+        Logger.error(msg)
         raise RuntimeError, message: msg
     end
 
+    # start recv loop in another process.
+    pid = self()
+    spawn_link(fn -> socketRecvLoop(conn, pid) end)
+
     seq = seq0 + 1
-    dict = Enum.into([conn: conn, myPrefix: myPrefix, seq: seq], HashDict.new)
+    dict = Enum.into([
+      conn: conn,
+      myPrefix: myPrefix,
+      seq: seq,
+      pidMap: HashDict.new
+    ], HashDict.new)
+
     {:ok, dict}
   end
 
-  def handle_call({:send_req, method, params}, _from, dict0) when not is_nil(params) do
-    conn = HashDict.get(dict0, :conn)
-    myPrefix = HashDict.get(dict0, :myPrefix)
-    seq0 = HashDict.get(dict0, :seq)
+  def handle_call({:send_req, method, params}, {fromPid, _}, dict0)
+      when not is_nil(params) do
+    conn = dict0[:conn]
+    myPrefix = dict0[:myPrefix]
+    seq0 = dict0[:seq]
     tag = myPrefix <> to_string(seq0)
 
-    params = HashDict.put(params, :sessionId, getSessionId(myPrefix))
+    params = Dict.put(params, :sessionId, getSessionId(myPrefix))
     bin =
       createReqObj(tag, method, params)
       |> KC.Core.JsonRpcUtil.serialize()
 
     socketSend(conn, bin)
-    res = socketRecv(conn)
 
-    ret = case parseResponse(res) do
-      # ok response from KMS. follows the KMS protocol spec.
-      {:ok, %{"result" => result}} -> {:ok, result}
+    seq = seq0 + 1
+    dict =
+      dict0
+      |> Dict.put(:seq, seq)
+      |> put_in([:pidMap, tag], fromPid) # save {tag -> pid} relation.
 
-      # error response from KMS. follows the KMS protocol spec.
+    {:reply, :ok, dict}
+  end
+
+  def handle_call({:process_response, bin}, _from, dict0) do
+    dict = case parseResponse(bin) do
+      # ok response from KMS.
+      {:response, %{"id" => tag, "result" => result}} ->
+        processResponse(tag, result, dict0)
+
+      # onEvent notification from KMS.
+      {:onEvent, %{"params" => params}} ->
+        KC.Core.EventHandler.notifyEvent(
+          KC.Core.EventHandler, params)
+        dict0
+
+      # error response from KMS.
       {:error, %{"error" => errInfo}} ->
         errCode = errInfo["code"]
-        errMsg = errInfo["message"]
         #TODO if code === 40007, try reconnect
-        msg = "Received error from KMS. code: #{errCode}. msg: #{errMsg}."
+        msg = "Received error from KMS. " <>
+          "code: #{errCode}. msg: #{errInfo["message"]}."
+        Logger.error(msg)
         raise RuntimeError, message: msg
     end
 
-    seq = seq0 + 1
-    dict = HashDict.put(dict0, :seq, seq)
-    {:reply, ret, dict}
+    {:reply, :ok, dict}
   end
 
   defp socketCreate(addr, port, path) do
@@ -93,22 +121,53 @@ defmodule KC.Core.WSClient do
     bin
   end
 
+  defp socketRecvLoop(conn, parent) do
+    {:text, bin} = Socket.Web.recv!(conn)
+    :ok = GenServer.call(parent, {:process_response, bin})
+    socketRecvLoop(conn, parent)
+  end
+
   defp parseResponse(resBin) do
     case KC.Core.JsonRpcUtil.deserialize(resBin) do
-      # error response from KMS. follows the KMS protocol spec.
+      # error response from KMS.
       %{"jsonrpc" => "2.0", "id" => _, "error" => %{} } = resObj ->
         {:error, resObj}
 
-      # ok response from KMS. follows the KMS protocol spec.
+      # onEvent notificaiton from KMS.
+      %{"jsonrpc" => "2.0", "id" => _, "method" => "onEvent",
+          "params" => %{} } = resObj ->
+        {:onEvent, resObj}
+
+      # ok response from KMS.
       %{"jsonrpc" => "2.0", "id" => _, "result" => %{} } = resObj ->
-        {:ok, resObj}
+        {:response, resObj}
 
       # json parse failure.
       %{"error" => %{"code" => errCode, "message" => errMsg}} ->
         msg = "json parse failed. code: #{errCode}. msg: #{errMsg}."
+        Logger.error(msg)
         raise RuntimeError, message: msg
 
     end
+  end
+
+  defp processResponse(tag, result, dict0) do
+    # Find pid to send result to.
+    pid = get_in(dict0, [:pidMap, tag])
+    if is_nil(pid) do
+      msg = "Pid for tag:#{tag} not found."
+      Logger.error(msg)
+      raise RuntimeError, message: msg
+    end
+
+    send(pid, {:response, result})
+
+    # return the new dict.
+    pidMap =
+      dict0[:pidMap]
+      |> Dict.delete(tag)
+
+    Dict.put(dict0, :pidMap, pidMap)
   end
 
   defp putSessionId(myPrefix, sessionId) do
@@ -132,7 +191,7 @@ defmodule KC.Core.WSClient do
     ], HashDict.new)
 
     if is_map(params) do
-      ret = HashDict.put(ret, :params, params)
+      ret = Dict.put(ret, :params, params)
     end
 
     ret

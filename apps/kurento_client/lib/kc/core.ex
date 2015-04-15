@@ -3,9 +3,13 @@ defmodule KC.Core do
 
   @objectStore KC.Core.ObjectStore
   @kmsClient KC.Core.WSClient
+  @eventHandler KC.Core.EventHandler
+
+  @responseTimeout 5_000 #millisec
 
   def getObjectStoreName, do: @objectStore
   def getKmsClientName, do: @kmsClient
+  def getEventHandlerName, do: @eventHandler
 
   def syncCreate(objectType, constructorParams \\ HashDict.new) do
     params = Enum.into([
@@ -76,8 +80,16 @@ defmodule KC.Core do
     nil
   end
 
-  def syncCallInner(method, params) do
-    {:ok, result} = @kmsClient.sendReq(@kmsClient, method, params)
-    result
+  defp syncCallInner(method, params) do
+    :ok = @kmsClient.sendReq(@kmsClient, method, params)
+
+    # wait for response.
+    receive do
+      {:response, response} -> response
+    after
+      @responseTimeout ->
+        raise RuntimeError,
+          message: "No response after #{@responseTimeout} millisecs."
+    end
   end
 end

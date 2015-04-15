@@ -30,10 +30,10 @@ defmodule KC.MO.Core.MediaElement do
     {funcName, _} = __ENV__.function
     params = HashDict.new
     if not is_nil(mediaType) do
-      params = HashDict.put(params, "mediaType", mediaType)
+      params = Dict.put(params, "mediaType", mediaType)
     end
     if not is_nil(description) do
-      params = HashDict.put(params, "description", description)
+      params = Dict.put(params, "description", description)
     end
     KC.Core.syncInvoke(id, funcName, params)
   end
@@ -52,10 +52,10 @@ defmodule KC.MO.Core.MediaElement do
     {funcName, _} = __ENV__.function
     params = HashDict.new
     if not is_nil(mediaType) do
-      params = HashDict.put(params, "mediaType", mediaType)
+      params = Dict.put(params, "mediaType", mediaType)
     end
     if not is_nil(description) do
-      params = HashDict.put(params, "description", description)
+      params = Dict.put(params, "description", description)
     end
     KC.Core.syncInvoke(id, funcName, params)
   end
@@ -81,16 +81,16 @@ defmodule KC.MO.Core.MediaElement do
       sinkMediaDescription) do
     {funcName, _} = __ENV__.function
     params = HashDict.new
-    params = HashDict.put(params, "sink", sinkId)
+    params = Dict.put(params, "sink", sinkId)
     if not is_nil(mediaType) do
-      params = HashDict.put(params, "mediaType", mediaType)
+      params = Dict.put(params, "mediaType", mediaType)
     end
     if not is_nil(sourceMediaDescription) do
-      params = HashDict.put(params,
+      params = Dict.put(params,
         "sourceMediaDescription", sourceMediaDescription)
     end
     if not is_nil(sinkMediaDescription) do
-      params = HashDict.put(params,
+      params = Dict.put(params,
         "sinkMediaDescription", sinkMediaDescription)
     end
     KC.Core.syncInvoke(sourceId, funcName, params)
@@ -116,16 +116,16 @@ defmodule KC.MO.Core.MediaElement do
       sinkMediaDescription) do
     {funcName, _} = __ENV__.function
     params = HashDict.new
-    params = HashDict.put(params, "sink", sinkId)
+    params = Dict.put(params, "sink", sinkId)
     if not is_nil(mediaType) do
-      params = HashDict.put(params, "mediaType", mediaType)
+      params = Dict.put(params, "mediaType", mediaType)
     end
     if not is_nil(sourceMediaDescription) do
-      params = HashDict.put(params,
+      params = Dict.put(params,
         "sourceMediaDescription", sourceMediaDescription)
     end
     if not is_nil(sinkMediaDescription) do
-      params = HashDict.put(params,
+      params = Dict.put(params,
         "sinkMediaDescription", sinkMediaDescription)
     end
     KC.Core.syncInvoke(sourceId, funcName, params)

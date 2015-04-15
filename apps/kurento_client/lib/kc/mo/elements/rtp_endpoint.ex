@@ -1,13 +1,15 @@
-defmodule KC.MO.Elements.WebRtcEndpoint do
+defmodule KC.MO.Elements.RtpEndpoint do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.Core.BaseRtpEndpoint
+  @chainParent KC.MO.Core.SdpEndpoint
 
-  @kmsType "WebRtcEndpoint"
+  @kmsType "RtpEndpoint"
 
   @moduledoc """
-  WebRtcEndpoint interface. This type of ``Endpoint``
-  offers media streaming using WebRTC.
+  Endpoint that provides bidirectional content delivery
+  capabilities with remote networked peers through RTP protocol.
+  An :rom:cls:`RtpEndpoint` contains paired sink and source
+  :rom:cls:`MediaPad` for audio and video.
 
   """
 

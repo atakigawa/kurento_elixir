@@ -1,13 +1,15 @@
-defmodule KC.MO.Elements.WebRtcEndpoint do
+defmodule KC.MO.Elements.Composite do
   require KC.Util.Macros
   @before_compile {KC.Util.Macros, :chainInject}
-  @chainParent KC.MO.Core.BaseRtpEndpoint
+  @chainParent KC.MO.Core.Hub
 
-  @kmsType "WebRtcEndpoint"
+  @kmsType "Composite"
 
   @moduledoc """
-  WebRtcEndpoint interface. This type of ``Endpoint``
-  offers media streaming using WebRTC.
+  A :rom:cls:`Hub` that mixes the :rom:attr:`MediaType.AUDIO`
+  stream of its connected sources and constructs a grid with
+  the :rom:attr:`MediaType.VIDEO` streams of its connected
+  sources into its sink.
 
   """
 

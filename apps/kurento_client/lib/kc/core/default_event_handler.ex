@@ -1,4 +1,4 @@
-defmodule KC.Core.EventHandler do
+defmodule KC.Core.DefaultEventHandler do
   require Logger
   use GenServer
 
@@ -21,9 +21,8 @@ defmodule KC.Core.EventHandler do
   def handle_call({:event_notify, params}, _from, dict0)
       when not is_nil(params) do
 
-    #TODO implement
-    IO.puts("#{__MODULE__} event_notified")
-    IO.inspect(params)
+    Logger.debug("#{__MODULE__} event notified.")
+    Logger.debug("#{inspect params}")
 
     dict = dict0
     {:reply, :ok, dict}

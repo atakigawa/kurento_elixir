@@ -3,13 +3,11 @@ defmodule KC.Core do
 
   @objectStore KC.Core.ObjectStore
   @kmsClient KC.Core.WSClient
-  @eventHandler KC.Core.EventHandler
 
   @responseTimeout 5_000 #millisec
 
   def getObjectStoreName, do: @objectStore
   def getKmsClientName, do: @kmsClient
-  def getEventHandlerName, do: @eventHandler
 
   def syncCreate(objectType, constructorParams \\ HashDict.new) do
     params = Enum.into([

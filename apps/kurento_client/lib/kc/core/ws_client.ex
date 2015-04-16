@@ -6,8 +6,8 @@ defmodule KC.Core.WSClient do
 
   ## Client API
 
-  def start_link(connInfo, opts \\ []) do
-    GenServer.start_link(__MODULE__, connInfo, opts)
+  def start_link(initInfo, opts \\ []) do
+    GenServer.start_link(__MODULE__, initInfo, opts)
   end
 
   def sendReq(wsc, method, params) do
@@ -16,11 +16,11 @@ defmodule KC.Core.WSClient do
 
   ## Server callbacks
 
-  def init({addr, port, path}) do
+  def init({{addr, port, path}, eventHandler}) do
     conn = socketCreate(addr, port, path)
-    myPrefix = KC.Util.SecureRandom.hex(8) <> "-"
+    pfx = KC.Util.SecureRandom.hex(8) <> "-"
     seq0 = 1
-    tag = myPrefix <> to_string(seq0)
+    tag = pfx <> to_string(seq0)
 
     # connect to KMS
     # TODO try to get sessionId from ObjectStore. there already might be one.
@@ -35,7 +35,7 @@ defmodule KC.Core.WSClient do
       {:response, %{"result" => result}} ->
         # save sessionId.
         sessionId = result["sessionId"]
-        putSessionId(myPrefix, sessionId)
+        putSessionId(pfx, sessionId)
 
       {:error, %{"error" => errInfo}} ->
         errCode = errInfo["code"]
@@ -52,9 +52,10 @@ defmodule KC.Core.WSClient do
     seq = seq0 + 1
     dict = Enum.into([
       conn: conn,
-      myPrefix: myPrefix,
+      pfx: pfx,
       seq: seq,
-      pidMap: HashDict.new
+      pidMap: HashDict.new,
+      eventHandler: eventHandler
     ], HashDict.new)
 
     {:ok, dict}
@@ -63,11 +64,11 @@ defmodule KC.Core.WSClient do
   def handle_call({:send_req, method, params}, {fromPid, _}, dict0)
       when not is_nil(params) do
     conn = dict0[:conn]
-    myPrefix = dict0[:myPrefix]
+    pfx = dict0[:pfx]
     seq0 = dict0[:seq]
-    tag = myPrefix <> to_string(seq0)
+    tag = pfx <> to_string(seq0)
 
-    params = Dict.put(params, :sessionId, getSessionId(myPrefix))
+    params = Dict.put(params, :sessionId, getSessionId(pfx))
     bin =
       createReqObj(tag, method, params)
       |> KC.Core.JsonRpcUtil.serialize()
@@ -91,8 +92,8 @@ defmodule KC.Core.WSClient do
 
       # onEvent notification from KMS.
       {:onEvent, %{"params" => params}} ->
-        KC.Core.EventHandler.notifyEvent(
-          KC.Core.EventHandler, params)
+        eventHandler = dict0[:eventHandler]
+        eventHandler.notifyEvent(eventHandler, params)
         dict0
 
       # error response from KMS.
@@ -170,15 +171,15 @@ defmodule KC.Core.WSClient do
     Dict.put(dict0, :pidMap, pidMap)
   end
 
-  defp putSessionId(myPrefix, sessionId) do
-    key = String.to_atom(myPrefix <> @sessionIdKeySuffix)
+  defp putSessionId(pfx, sessionId) do
+    key = String.to_atom(pfx <> @sessionIdKeySuffix)
     {:ok, _} = KC.Core.ObjectStore.putSession(
       KC.Core.ObjectStore, key, sessionId)
     nil
   end
 
-  defp getSessionId(myPrefix) do
-    key = String.to_atom(myPrefix <> @sessionIdKeySuffix)
+  defp getSessionId(pfx) do
+    key = String.to_atom(pfx <> @sessionIdKeySuffix)
     {:ok, sessionId} = KC.Core.ObjectStore.getSession(
       KC.Core.ObjectStore, key)
     sessionId

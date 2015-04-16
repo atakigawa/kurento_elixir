@@ -16,7 +16,8 @@ use Mix.Config
 #       metadata: [:user_id]
 
 config :KC,
-  kms_conn_info: {"localhost", 8888, "/kurento"}
+  kms_conn_info: {"localhost", 8888, "/kurento"},
+  event_handler: KC.Core.DefaultEventHandler
 
 # It is also possible to import configuration files, relative to this
 # directory. For example, you can emulate configuration per environment

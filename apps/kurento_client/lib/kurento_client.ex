@@ -7,14 +7,17 @@ defmodule KC do
     import Supervisor.Spec, warn: false
 
     objectStore = KC.Core.getObjectStoreName()
-    eventHandler = KC.Core.getEventHandlerName()
     kmsClient = KC.Core.getKmsClientName()
+    eventHandler = KC.config(:event_handler)
 
     children = [
       # Define workers and child supervisors to be supervised
       worker(objectStore, [[name: objectStore]]),
       worker(eventHandler, [[name: eventHandler]]),
-      worker(kmsClient, [KC.config(:kms_conn_info), [name: kmsClient]]),
+      worker(kmsClient, [
+        {KC.config(:kms_conn_info), eventHandler},
+        [name: kmsClient]
+      ]),
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

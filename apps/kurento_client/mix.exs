@@ -33,8 +33,12 @@ defmodule KC.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [
-      {:"socket", git: "https://github.com/meh/elixir-socket.git"},
-      {:"jiffy", git: "https://github.com/davisp/jiffy.git"},
+      {:"socket",
+        git: "https://github.com/meh/elixir-socket.git",
+        ref: "1d1a85031e862dbf1d17f1c867a5871bc52e95da"},
+      {:"jiffy",
+        git: "https://github.com/davisp/jiffy.git",
+        ref: "801f9e72995eb72b303018885137ad8afbf1fb2b"},
     ]
   end
 end
